@@ -22,7 +22,7 @@ A cute and incredibly easy-to-use companion web app to generate custom, interact
 <hr>
 
 <h2>🌟 What is this?</h2>
-<p>This project is the official <strong>Link Generator</strong> for the <a href="https://github.com/R0mb0/Be_my_valentine" target="_blank"><strong>Runaway Valentine</strong></a> project. While the main project provides the interactive "proposal" experience, this tool allows <em>anyone</em> (even those with zero coding experience) to safely generate a custom URL injected with their loved one's name.</p>
+<p>This project is the official <strong>Link Generator</strong> for the <a href="https://github.com/R0mb0/Be_my_valentine" target="_blank"><strong>Be my valentine</strong></a> project. While the main project provides the interactive "proposal" experience, this tool allows <em>anyone</em> (even those with zero coding experience) to safely generate a custom URL injected with their loved one's name.</p>
 
 <h2>🚀 Features</h2>
 <ul>
