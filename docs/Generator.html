@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Create Your Love Link 💌</title>
+    <!-- FontAwesome for the Share Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === GENERAL STYLES === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #ffb6c1; /* Base pink color */
+            transition: background-color 1s ease;
+        }
+
+        /* Canvas for the clouds/brush effect */
+        #cloud-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* === UI CONTAINER === */
+        #ui-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 8vh;
+            padding-bottom: 5vh;
+            min-height: 100%;
+            text-align: center;
+            pointer-events: auto;
+        }
+
+        /* === TEXT STYLES === */
+        h1 {
+            color: #d10024;
+            -webkit-text-stroke: 1.5px #ffd700;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            padding: 0 20px;
+            max-width: 90%;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 20px;
+        }
+
+        /* === GIF IMAGE CONTAINER === */
+        .gif-container {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #main-gif {
+            width: 90%;
+            max-width: 220px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+        }
+
+        /* === GENERATOR INPUT FIELD === */
+        .input-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            flex-grow: 1;
+            height: 60px;
+            border: 3px solid #ff4757;
+            border-radius: 30px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            color: #d10024;
+            background: rgba(255, 255, 255, 0.9);
+            outline: none;
+            resize: none; /* Prevents resizing */
+            overflow-y: auto; /* Allows vertical scrolling */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        textarea::placeholder {
+            color: #ffa4b4;
+            font-weight: normal;
+        }
+
+        /* === BUTTONS === */
+        button {
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        button:active {
+            transform: scale(0.92);
+        }
+
+        #btn-share {
+            background-color: #00a8ff; /* Nice bright blue for sharing */
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #btn-generate {
+            background-color: #28a745;
+            font-size: 1.3rem;
+            padding: 15px 40px;
+            border-radius: 50px;
+            white-space: nowrap;
+            margin-bottom: 20px;
+        }
+
+        /* === RESULT BOX === */
+        #result-container {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            cursor: pointer; /* Suggests it can be clicked */
+        }
+
+        #generated-link {
+            font-family: monospace;
+            color: #2f3640;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+            user-select: all;
+        }
+
+        #copy-status {
+            font-size: 0.9rem;
+            color: #28a745;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* === GITHUB BANNER === */
+        .github-banner {
+            margin-top: auto; /* Pushes to the bottom */
+            padding-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .github-banner p {
+            color: #d10024;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .github-btn {
+            background-color: #2f3640;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .github-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas for brush/clouds effect -->
+    <canvas id="cloud-canvas"></canvas>
+
+    <!-- Main UI Container -->
+    <div id="ui-container">
+        <h1 id="main-text">Create Your Love Link! 💌</h1>
+        
+        <!-- GIF Container -->
+        <div class="gif-container">
+            <!-- Cute cat sending a letter GIF -->
+            <img id="main-gif" src="sendingLove.gif" alt="Sending Love GIF">
+        </div>
+        
+        <!-- Input Group: Textarea + Share Button -->
+        <div class="input-group">
+            <textarea id="name-input" placeholder="Enter their name here..."></textarea>
+            <button id="btn-share" title="Share directly!"><i class="fa-solid fa-share-nodes"></i></button>
+        </div>
+
+        <button id="btn-generate">Generate the Love Link ✨</button>
+
+        <!-- Result Box (Hidden initially) -->
+        <div id="result-container" onclick="copyToClipboard()">
+            <p id="generated-link">Your link will appear here...</p>
+            <p id="copy-status"><i class="fa-solid fa-check"></i> Copied to clipboard!</p>
+        </div>
+
+        <!-- GitHub Banner -->
+        <div class="github-banner">
+            <p>Do you like this open-source project?</p>
+            <a href="https://github.com/R0mb0/Be_my_valentine" target="_blank" class="github-btn">
+                <i class="fa-brands fa-github"></i> Star it on GitHub!
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // === GENERATOR LOGIC ===
+        const baseUrl = "https://r0mb0.github.io/Be_my_valentine/?name=";
+        
+        const nameInput = document.getElementById('name-input');
+        const btnGenerate = document.getElementById('btn-generate');
+        const btnShare = document.getElementById('btn-share');
+        const resultContainer = document.getElementById('result-container');
+        const generatedLinkText = document.getElementById('generated-link');
+        const copyStatus = document.getElementById('copy-status');
+
+        // Function to safely create the URL
+        function createLink() {
+            let name = nameInput.value.trim();
+            if (name === "") {
+                name = "Honey"; // Fallback if empty
+            }
+            // encodeURIComponent translates spaces to %20, enters to %0A, emojis safely, etc.
+            return baseUrl + encodeURIComponent(name);
+        }
+
+        // Generate Button Click
+        btnGenerate.addEventListener('click', () => {
+            const finalLink = createLink();
+            generatedLinkText.innerText = finalLink;
+            resultContainer.style.display = 'flex'; // Show the box
+            
+            // Optional: automatically copy when generating
+            copyToClipboard(); 
+        });
+
+        // Copy to clipboard function
+        function copyToClipboard() {
+            const linkToCopy = generatedLinkText.innerText;
+            if(!linkToCopy || linkToCopy === "Your link will appear here...") return;
+
+            // Use the fallback execCommand for maximum compatibility
+            const tempInput = document.createElement("input");
+            tempInput.value = linkToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Show "Copied!" message
+            copyStatus.style.opacity = "1";
+            setTimeout(() => {
+                copyStatus.style.opacity = "0";
+            }, 2000);
+        }
+
+        // Share Button Click (Native Web Share API)
+        btnShare.addEventListener('click', async () => {
+            const finalLink = createLink();
+            
+            // Update the UI anyway so the user sees it
+            generatedLinkText.innerText = finalLink;
+            resultContainer.style.display = 'flex';
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Be My Valentine ❤️',
+                        text: 'I made something special for you... click here to see it! 💌',
+                        url: finalLink
+                    });
+                } catch (err) {
+                    console.log('User cancelled share or error:', err);
+                }
+            } else {
+                // Fallback for desktop browsers that don't support Web Share API
+                copyToClipboard();
+                alert("Link copied to clipboard! Paste it wherever you want to share it.");
+            }
+        });
+
+
+        // === CANVAS EFFECT (DYNAMIC CLOUDS / MOUSE BRUSH) ===
+        // Same logic as index.html to keep the graphics consistent
+        const htmlCanvas = document.getElementById('cloud-canvas');
+        const ctx = htmlCanvas.getContext('2d');
+        let width, height;
+
+        let baseColor = [255, 182, 193]; 
+        let cloudColor = 'rgba(255, 255, 255, 0.15)'; 
+
+        const resizeCanvas = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            htmlCanvas.width = width;
+            htmlCanvas.height = height;
+            ctx.fillStyle = `rgb(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]})`;
+            ctx.fillRect(0, 0, width, height);
+        };
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        const drawCloud = (x, y) => {
+            const radius = 80 + Math.random() * 40; 
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+            gradient.addColorStop(0, cloudColor);
+            gradient.addColorStop(1, 'rgba(255,255,255,0)');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        };
+
+        const updatePosition = (e) => {
+            if(e.touches) {
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            } else {
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            updatePosition(e);
+            drawCloud(lastX, lastY);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            updatePosition(e);
+            drawCloud(lastX, lastY);
+        }, {passive: true});
+
+        const loop = () => {
+            ctx.fillStyle = `rgba(${baseColor[0]}, ${baseColor[1]}, ${baseColor[2]}, 0.03)`;
+            ctx.fillRect(0, 0, width, height);
+            requestAnimationFrame(loop);
+        };
+        
+        loop();
+
+    </script>
+</body>
+</html>
