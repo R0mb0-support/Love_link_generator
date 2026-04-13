@@ -16,8 +16,13 @@ A cute and incredibly easy-to-use companion web app to generate custom, interact
 
 </div>
 
-<!-- Replace these with your actual screenshots -->
 [![01.png](https://github.com/R0mb0/Love_link_generator/blob/main/ReadmeImgs/01.png)](https://r0mb0.github.io/Love_link_generator/)
+
+<div align="center">
+<h2><a href="https://r0mb0.github.io/Love_link_generator/">👉 Or click here to discover the main project! 👈</a></h2>
+</div>
+
+[![01.png](https://github.com/R0mb0/Be_my_valentine/blob/main/Readme_Imgs/01.png)](https://r0mb0.github.io/Be_my_valentine/)
 
 <hr>
 
